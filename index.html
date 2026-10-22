@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>V O I D — Maison de l'Immatériel</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Plus+Jakarta+Sans:wght@200;300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #F9F8F6;
+      --fg: #111111;
+      --muted: #767676;
+      --border: rgba(17, 17, 17, 0.12);
+    }
+
+    body.xray-mode {
+      --bg: #0A0A0C;
+      --fg: #F4F4F6;
+      --muted: #8E8E93;
+      --border: rgba(244, 244, 246, 0.2);
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--fg);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      transition: background-color 0.6s cubic-bezier(0.16, 1, 0.3, 1), color 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      overflow-x: hidden;
+    }
+
+    .serif {
+      font-family: 'Cormorant Garamond', serif;
+    }
+
+    .border-subtle {
+      border-color: var(--border);
+    }
+
+    /* Subtle grid inside product frames to emphasize emptiness */
+    .void-canvas {
+      background-image: radial-gradient(var(--border) 1px, transparent 1px);
+      background-size: 24px 24px;
+      position: relative;
+      overflow: hidden;
+      cursor: none;
+    }
+
+    body.xray-mode .void-canvas {
+      background-image: 
+        linear-gradient(to right, rgba(255,255,255,0.04) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255,255,255,0.04) 1px, transparent 1px);
+      background-size: 32px 32px;
+    }
+
+    /* X-Ray wireframe blueprint graphics */
+    .xray-blueprint {
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+
+    body.xray-mode .xray-blueprint {
+      opacity: 0.65;
+    }
+
+    .void-canvas:hover .xray-blueprint {
+      opacity: 0.35;
+    }
+
+    body.xray-mode .void-canvas:hover .xray-blueprint {
+      opacity: 1;
+    }
+
+    /* Custom Magnifying Loupe */
+    .loupe {
+      width: 110px;
+      height: 110px;
+      border: 1px solid var(--fg);
+      border-radius: 50%;
+      position: absolute;
+      pointer-events: none;
+      transform: translate(-50%, -50%) scale(0);
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      backdrop-filter: contrast(1.15) blur(1px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 20;
+    }
+
+    .void-canvas:hover .loupe {
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    /* Marquee animation */
+    @keyframes marquee {
+      0% { transform: translateX(0%); }
+      100% { transform: translateX(-50%); }
+    }
+    .animate-marquee {
+      display: flex;
+      width: 200%;
+      animation: marquee 30s linear infinite;
+    }
+  </style>
+</head>
+<body class="antialiased selection:bg-neutral-900 selection:text-white">
+
+  <!-- Top Announcement Bar -->
+  <div class="border-b border-subtle py-2 px-4 text-[11px] tracking-[0.25em] uppercase text-center font-light">
+    Complimentary Telepathic Shipping on All Orders Over $0,000 — Zero Carbon, Zero Mass
+  </div>
+
+  <!-- Navigation -->
+  <header class="sticky top-0 z-40 backdrop-blur-md bg-opacity-80 border-b border-subtle transition-colors duration-500" style="background-color: color-mix(in srgb, var(--bg) 85%, transparent);">
+    <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+      <div class="flex items-center space-x-8 text-xs tracking-[0.2em] uppercase">
+        <a href="#collection" class="hover:opacity-50 transition">Archive 01</a>
+        <a href="#atelier" class="hover:opacity-50 transition hidden sm:inline">Savoir-Faire</a>
+        <a href="#manifesto" class="hover:opacity-50 transition hidden md:inline">Philosophy</a>
+      </div>
+
+      <a href="#" class="serif text-3xl md:text-4xl tracking-[0.35em] font-light pl-[0.35em]">
+        VOID
+      </a>
+
+      <div class="flex items-center space-x-6 text-xs tracking-[0.18em] uppercase">
+        <!-- X-Ray Mode Toggle -->
+        <button id="xrayToggle" class="flex items-center space-x-2 border border-subtle px-3 py-1.5 rounded-full hover:border-current transition">
+          <span class="w-2 h-2 rounded-full bg-current transition-transform" id="xrayDot"></span>
+          <span id="xrayLabel">X-Ray: Off</span>
+        </button>
+
+        <!-- Cart Trigger -->
+        <button id="cartBtn" class="hover:opacity-60 transition flex items-center space-x-1.5">
+          <span>Bag</span>
+          <span id="cartCount" class="serif italic text-base">(0)</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="relative min-h-[82vh] flex flex-col justify-between border-b border-subtle px-6 py-16 max-w-7xl mx-auto">
+    <div class="flex justify-between items-start text-xs uppercase tracking-[0.2em] opacity-60">
+      <span>Paris / Tokyo / Nowhere</span>
+      <span>Autumn / Winter — Non-Existent</span>
+    </div>
+
+    <div class="my-auto py-16 text-center max-w-4xl mx-auto">
+      <p class="text-xs uppercase tracking-[0.3em] mb-6 opacity-70">Haute Couture de l'Absence</p>
+      <h1 class="serif text-5xl sm:text-7xl md:text-8xl font-light leading-[1.05] tracking-tight mb-8">
+        The unbearable lightness of <span class="italic font-normal">owning nothing.</span>
+      </h1>
+      <p class="max-w-xl mx-auto text-sm md:text-base font-light leading-relaxed opacity-75 mb-12">
+        Meticulously un-crafted in our Parisian atelier. Each piece in our inaugural collection is stripped of matter, weight, and visual clutter—leaving only pure, unadulterated prestige.
+      </p>
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+        <a href="#collection" class="px-8 py-4 border border-current text-xs uppercase tracking-[0.25em] hover:bg-neutral-900 hover:text-white transition duration-300">
+          Inspect the Unseen
+        </a>
+        <button onclick="toggleXray()" class="px-8 py-4 text-xs uppercase tracking-[0.25em] opacity-70 hover:opacity-100 transition underline underline-offset-8">
+          Toggle Structural X-Ray
+        </button>
+      </div>
+    </div>
+
+    <div class="flex justify-between items-end text-xs uppercase tracking-[0.2em] opacity-60">
+      <span>Refractive Index: 1.000293</span>
+      <span>Scroll to Perceive ↓</span>
+    </div>
+  </section>
+
+  <!-- Infinite Marquee -->
+  <div class="border-b border-subtle py-4 overflow-hidden select-none">
+    <div class="animate-marquee whitespace-nowrap flex items-center space-x-12 text-xs uppercase tracking-[0.3em] opacity-60">
+      <span>100% Ethically Sourced Vacuum</span>
+      <span>✦</span>
+      <span>Zero Storage Footprint</span>
+      <span>✦</span>
+      <span>Hypoallergenic & Non-Euclidean</span>
+      <span>✦</span>
+      <span>Dry Clean by Imagination Only</span>
+      <span>✦</span>
+      <span>100% Ethically Sourced Vacuum</span>
+      <span>✦</span>
+      <span>Zero Storage Footprint</span>
+      <span>✦</span>
+      <span>Hypoallergenic & Non-Euclidean</span>
+      <span>✦</span>
+      <span>Dry Clean by Imagination Only</span>
+      <span>✦</span>
+    </div>
+  </div>
+
+  <!-- Curated Collection -->
+  <section id="collection" class="max-w-7xl mx-auto px-6 py-24">
+    <div class="flex flex-col md:flex-row md:items-end justify-between mb-16 pb-6 border-b border-subtle">
+      <div>
+        <span class="text-xs uppercase tracking-[0.25em] opacity-60 block mb-2">Catalogue N° 01</span>
+        <h2 class="serif text-4xl md:text-5xl font-light">The Immaterial Objects</h2>
+      </div>
+      
+      <!-- Filter Tabs -->
+      <div class="flex space-x-6 mt-6 md:mt-0 text-xs uppercase tracking-[0.2em]">
+        <button onclick="filterProducts('all')" class="filter-btn underline underline-offset-8 font-medium" data-filter="all">All (6)</button>
+        <button onclick="filterProducts('couture')" class="filter-btn opacity-50 hover:opacity-100 transition" data-filter="couture">Couture</button>
+        <button onclick="filterProducts('objets')" class="filter-btn opacity-50 hover:opacity-100 transition" data-filter="objets">Objets d'Art</button>
+        <button onclick="filterProducts('olfactory')" class="filter-btn opacity-50 hover:opacity-100 transition" data-filter="olfactory">Olfactory</button>
+      </div>
+    </div>
+
+    <!-- Product Grid -->
+    <div id="productGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16">
+      <!-- Products injected via JS -->
+    </div>
+  </section>
+
+  <!-- Savoir-Faire / Atelier Section -->
+  <section id="atelier" class="border-t border-b border-subtle py-24 px-6">
+    <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+      <div class="lg:col-span-5 space-y-6">
+        <span class="text-xs uppercase tracking-[0.25em] opacity-60">Savoir-Faire</span>
+        <h3 class="serif text-4xl md:text-5xl font-light leading-tight">
+          400 hours of <span class="italic">painstaking subtraction.</span>
+        </h3>
+        <p class="text-sm font-light leading-relaxed opacity-75">
+          Where lesser houses obsess over cashmere thread counts and rare metals, our master artisans spend months carefully removing every last atom from our garments. 
+        </p>
+        <p class="text-sm font-light leading-relaxed opacity-75">
+          Each seam is hand-whispered into alignment. The result is a silhouette so discreet, only those with truly elevated discernment will notice you are wearing anything at all.
+        </p>
+        <div class="pt-4 grid grid-cols-3 gap-4 border-t border-subtle text-center">
+          <div>
+            <span class="serif text-3xl block">0.00g</span>
+            <span class="text-[10px] uppercase tracking-[0.2em] opacity-60">Gross Weight</span>
+          </div>
+          <div>
+            <span class="serif text-3xl block">100%</span>
+            <span class="text-[10px] uppercase tracking-[0.2em] opacity-60">Transparency</span>
+          </div>
+          <div>
+            <span class="serif text-3xl block">∞</span>
+            <span class="text-[10px] uppercase tracking-[0.2em] opacity-60">Shelf Life</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Interactive Inspection Frame -->
+      <div class="lg:col-span-7">
+        <div class="void-canvas border border-subtle aspect-[16/10] flex flex-col justify-between p-8" onmousemove="moveLoupe(event, this)">
+          <div class="loupe">
+            <span class="text-[9px] uppercase tracking-[0.2em]">Pure Air</span>
+          </div>
+          <div class="flex justify-between text-[11px] uppercase tracking-[0.2em] opacity-50">
+            <span>Fig 01. Master Artisan at Work</span>
+            <span>Scale 1:1</span>
+          </div>
+          
+          <!-- SVG Wireframe visible on hover or X-Ray mode -->
+          <svg class="xray-blueprint w-48 h-48 mx-auto stroke-current fill-none" viewBox="0 0 100 100" stroke-width="0.4" stroke-dasharray="2 2">
+            <circle cx="50" cy="50" r="40" />
+            <line x1="10" y1="50" x2="90" y2="50" />
+            <line x1="50" y1="10" x2="50" y2="90" />
+            <rect x="28" y="28" width="44" height="44" />
+          </svg>
+
+          <div class="text-center">
+            <p class="serif italic text-lg opacity-70">"Move cursor across the frame to inspect the molecular emptiness."</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Client Testimonials -->
+  <section id="manifesto" class="max-w-5xl mx-auto px-6 py-24 text-center">
+    <span class="text-xs uppercase tracking-[0.25em] opacity-60 block mb-10">Patron Reflections</span>
+    <blockquote class="serif text-3xl md:text-4xl font-light italic leading-relaxed mb-8">
+      “I wore The Emperor’s Trench to the Venice Biennale. Three critics wept, and a minimalist architect offered to buy the air around my shoulders.”
+    </blockquote>
+    <cite class="not-italic text-xs uppercase tracking-[0.25em] opacity-60">
+      — Lord Julian Vance, Collector of Non-Fungible Silences
+    </cite>
+  </section>
+
+  <!-- Slide-out Cart Drawer -->
+  <div id="cartDrawer" class="fixed inset-0 z-50 pointer-events-none">
+    <div id="cartBackdrop" onclick="toggleCart()" class="absolute inset-0 bg-black/40 opacity-0 transition-opacity duration-500"></div>
+    <div id="cartPanel" class="absolute top-0 right-0 h-full w-full max-w-md border-l border-subtle p-8 flex flex-col justify-between translate-x-full transition-transform duration-500 ease-out" style="background-color: var(--bg);">
+      <div>
+        <div class="flex items-center justify-between pb-6 border-b border-subtle">
+          <h3 class="serif text-2xl font-light tracking-wide">Your Immaterial Bag</h3>
+          <button onclick="toggleCart()" class="text-xs uppercase tracking-[0.2em] opacity-60 hover:opacity-100">Close [✕]</button>
+        </div>
+        <div id="cartItems" class="py-6 space-y-6 max-h-[60vh] overflow-y-auto">
+          <p class="serif italic text-lg opacity-60 text-center py-12">Your bag is currently as empty as our products.</p>
+        </div>
+      </div>
+
+      <div class="border-t border-subtle pt-6 space-y-4">
+        <div class="flex justify-between text-xs uppercase tracking-[0.2em] opacity-70">
+          <span>Estimated Weight</span>
+          <span>0.000 kg</span>
+        </div>
+        <div class="flex justify-between items-baseline">
+          <span class="text-xs uppercase tracking-[0.2em]">Subtotal</span>
+          <span id="cartTotal" class="serif text-2xl">$0</span>
+        </div>
+        <button onclick="checkout()" class="w-full py-4 border border-current text-xs uppercase tracking-[0.25em] hover:bg-neutral-900 hover:text-white transition duration-300">
+          Proceed to Intangible Checkout
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed bottom-6 right-6 z-50 px-6 py-4 border border-subtle shadow-sm translate-y-24 opacity-0 transition-all duration-300 pointer-events-none text-xs uppercase tracking-[0.2em]" style="background-color: var(--bg);">
+    Added to your existential void.
+  </div>
+
+  <!-- Footer -->
+  <footer class="border-t border-subtle py-12 px-6 text-xs uppercase tracking-[0.2em] opacity-60">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-6">
+      <span>© 2026 MAISON VOID. NO RIGHTS RESERVED (NOTHING TO COPY).</span>
+      <div class="flex flex-col items-center gap-2 opacity-80">
+        <span class="text-[10px] tracking-[0.15em]">If you enjoyed the nothing, support the artist</span>
+        <script type="text/javascript" src="https://cdnjs.buymeacoffee.com/1.0.0/button.prod.min.js" data-name="bmc-button" data-slug="alinearoucha" data-color="#FFDD00" data-emoji="☕" data-font="Cookie" data-text="Buy me a coffee" data-outline-color="#000000" data-font-color="#000000" data-coffee-color="#ffffff"></script>
+      </div>
+      <span>No Cookies Used — They Have Too Much Mass</span>
+    </div>
+  </footer>
+
+  <script>
+    const products = [
+      {
+        id: 1,
+        name: "L'Imperméable de l'Empereur",
+        subtitle: "Unstructured Atmospheric Trench",
+        category: "couture",
+        price: 4200,
+        composition: "78% Nitrogen, 21% Oxygen, 1% Pure Audacity",
+        dimensions: "Drapes effortlessly over any silhouette",
+        svg: `<path d="M35 20 L65 20 L75 85 L25 85 Z" /><line x1="50" y1="20" x2="50" y2="85" />`
+      },
+      {
+        id: 2,
+        name: "Silence N° 5 (Extrait)",
+        subtitle: "Unscented Olfactory Vacuum — 50ml",
+        category: "olfactory",
+        price: 890,
+        composition: "Top notes of quiet room; base notes of paused conversation",
+        dimensions: "Flacon omitted for visual purity",
+        svg: `<rect x="32" y="35" width="36" height="48" /><rect x="42" y="22" width="16" height="13" /><circle cx="50" cy="59" r="10" />`
+      },
+      {
+        id: 3,
+        name: "Le Monolithe Brut",
+        subtitle: "weightless Brutalist Coffee Table",
+        category: "objets",
+        price: 11500,
+        composition: "Hand-polished negative space",
+        dimensions: "120cm × 80cm × 0cm",
+        svg: `<polygon points="20,60 50,40 80,60 50,80" /><line x1="20" y1="60" x2="20" y2="75" /><line x1="50" y1="80" x2="50" y2="95" /><line x1="80" y1="60" x2="80" y2="75" />`
+      },
+      {
+        id: 4,
+        name: "Le Sac Sans Fond",
+        subtitle: "Zero-Capacity Weekender Tote",
+        category: "couture",
+        price: 3100,
+        composition: "Vegan ether with brushed-air hardware",
+        dimensions: "Holds zero emotional or physical baggage",
+        svg: `<rect x="28" y="42" width="44" height="40" /><path d="M38 42 C38 22, 62 22, 62 42" />`
+      },
+      {
+        id: 5,
+        name: "Vase Ming Immatériel",
+        subtitle: "Vessel for Unpicked Flowers",
+        category: "objets",
+        price: 6400,
+        composition: "Kiln-fired acoustic resonance",
+        dimensions: "Shatterproof (Already non-existent)",
+        svg: `<path d="M40 20 L60 20 C75 45, 70 75, 55 85 L45 85 C30 75, 25 45, 40 20 Z" />`
+      },
+      {
+        id: 6,
+        name: "Bougie 'Souffle d'Hiver'",
+        subtitle: "Unlit Cold-Draft Candle",
+        category: "olfactory",
+        price: 340,
+        composition: "0% Soy Wax, 0% Smoke, 100% Placebo",
+        dimensions: "Burn time: Eternal",
+        svg: `<ellipse cx="50" cy="35" rx="20" ry="6" /><path d="M30 35 L30 80 C30 85, 70 85, 70 80 L70 35" /><line x1="50" y1="25" x2="50" y2="35" />`
+      }
+    ];
+
+    let cart = [];
+    let currentFilter = 'all';
+
+    function renderProducts() {
+      const grid = document.getElementById('productGrid');
+      const filtered = currentFilter === 'all' 
+        ? products 
+        : products.filter(p => p.category === currentFilter);
+
+      grid.innerHTML = filtered.map((p, index) => `
+        <article class="group flex flex-col justify-between">
+          <div>
+            <!-- Empty Product Frame -->
+            <div class="void-canvas border border-subtle aspect-[4/5] mb-6 p-6 flex flex-col justify-between" onmousemove="moveLoupe(event, this)">
+              <div class="loupe">
+                <span class="text-[8px] uppercase tracking-[0.2em] text-center px-2">100% Void<br>Verified</span>
+              </div>
+
+              <div class="flex justify-between items-center text-[10px] uppercase tracking-[0.2em] opacity-40">
+                <span>Lot 0${p.id}</span>
+                <span>${p.category}</span>
+              </div>
+
+              <!-- X-Ray Wireframe SVG -->
+              <svg class="xray-blueprint w-40 h-40 mx-auto stroke-current fill-none" viewBox="0 0 100 100" stroke-width="0.5" stroke-dasharray="2 2">
+                ${p.svg}
+              </svg>
+
+              <div class="text-[11px] font-light opacity-0 group-hover:opacity-70 transition-opacity duration-500 text-center">
+                <p class="italic serif text-sm mb-1">${p.dimensions}</p>
+                <p class="text-[10px] uppercase tracking-[0.15em]">${p.composition}</p>
+              </div>
+            </div>
+
+            <!-- Product Meta -->
+            <div class="flex justify-between items-baseline mb-1">
+              <h3 class="serif text-2xl font-normal">${p.name}</h3>
+              <span class="serif text-xl">$${p.price.toLocaleString()}</span>
+            </div>
+            <p class="text-xs opacity-60 font-light tracking-wide mb-6">${p.subtitle}</p>
+          </div>
+
+          <button onclick="addToCart(${p.id})" class="w-full py-3.5 border border-subtle text-[11px] uppercase tracking-[0.25em] hover:border-current transition duration-300 flex items-center justify-center space-x-2">
+            <span>Acquire Nothing</span>
+            <span>+</span>
+          </button>
+        </article>
+      `).join('');
+    }
+
+    function moveLoupe(e, container) {
+      const rect = container.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const loupe = container.querySelector('.loupe');
+      if (loupe) {
+        loupe.style.left = `${x}px`;
+        loupe.style.top = `${y}px`;
+      }
+    }
+
+    function filterProducts(category) {
+      currentFilter = category;
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        if (btn.dataset.filter === category) {
+          btn.classList.add('underline', 'underline-offset-8', 'font-medium');
+          btn.classList.remove('opacity-50');
+        } else {
+          btn.classList.remove('underline', 'underline-offset-8', 'font-medium');
+          btn.classList.add('opacity-50');
+        }
+      });
+      renderProducts();
+    }
+
+    function toggleXray() {
+      document.body.classList.toggle('xray-mode');
+      const isXray = document.body.classList.contains('xray-mode');
+      document.getElementById('xrayLabel').textContent = isXray ? 'X-Ray: On' : 'X-Ray: Off';
+    }
+
+    document.getElementById('xrayToggle').addEventListener('click', toggleXray);
+
+    function addToCart(id) {
+      const product = products.find(p => p.id === id);
+      cart.push(product);
+      updateCartUI();
+      showToast(`Added "${product.name}" to your bag.`);
+    }
+
+    function removeFromCart(index) {
+      cart.splice(index, 1);
+      updateCartUI();
+    }
+
+    function updateCartUI() {
+      document.getElementById('cartCount').textContent = `(${cart.length})`;
+      const cartItems = document.getElementById('cartItems');
+      const cartTotal = document.getElementById('cartTotal');
+
+      if (cart.length === 0) {
+        cartItems.innerHTML = `<p class="serif italic text-lg opacity-60 text-center py-12">Your bag is currently as empty as our products.</p>`;
+        cartTotal.textContent = '$0';
+        return;
+      }
+
+      const total = cart.reduce((sum, item) => sum + item.price, 0);
+      cartTotal.textContent = `$${total.toLocaleString()}`;
+
+      cartItems.innerHTML = cart.map((item, idx) => `
+        <div class="flex justify-between items-center pb-4 border-b border-subtle">
+          <div>
+            <h4 class="serif text-lg">${item.name}</h4>
+            <p class="text-[10px] uppercase tracking-[0.2em] opacity-60">${item.subtitle}</p>
+          </div>
+          <div class="flex items-center space-x-4">
+            <span class="serif text-lg">$${item.price.toLocaleString()}</span>
+            <button onclick="removeFromCart(${idx})" class="text-xs opacity-40 hover:opacity-100">✕</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function toggleCart() {
+      const drawer = document.getElementById('cartDrawer');
+      const backdrop = document.getElementById('cartBackdrop');
+      const panel = document.getElementById('cartPanel');
+      const isOpen = !drawer.classList.contains('pointer-events-none');
+
+      if (isOpen) {
+        backdrop.classList.add('opacity-0');
+        panel.classList.add('translate-x-full');
+        setTimeout(() => drawer.classList.add('pointer-events-none'), 500);
+      } else {
+        drawer.classList.remove('pointer-events-none');
+        backdrop.classList.remove('opacity-0');
+        panel.classList.remove('translate-x-full');
+      }
+    }
+
+    document.getElementById('cartBtn').addEventListener('click', toggleCart);
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.classList.remove('translate-y-24', 'opacity-0');
+      setTimeout(() => {
+        toast.classList.add('translate-y-24', 'opacity-0');
+      }, 2600);
+    }
+
+    function checkout() {
+      if (cart.length === 0) {
+        showToast("Please select at least one absence first.");
+        return;
+      }
+      showToast("Redirecting to the material realm...");
+      setTimeout(() => {
+        window.open('https://www.buymeacoffee.com/alinearoucha', '_blank');
+      }, 800);
+    }
+
+    // Initialize
+    renderProducts();
+  </script>
+</body>
+</html>
