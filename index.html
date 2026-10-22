@@ -128,7 +128,7 @@
 
       <div class="flex items-center space-x-6 text-xs tracking-[0.18em] uppercase">
         <!-- X-Ray Mode Toggle -->
-        <button id="xrayToggle" class="flex items-center space-x-2 border border-subtle px-3 py-1.5 rounded-full hover:border-current transition">
+        <button id="xrayToggle" class="hidden sm:flex items-center space-x-2 border border-subtle px-3 py-1.5 rounded-full hover:border-current transition">
           <span class="w-2 h-2 rounded-full bg-current transition-transform" id="xrayDot"></span>
           <span id="xrayLabel">X-Ray: Off</span>
         </button>
@@ -163,7 +163,7 @@
         <a href="#collection" class="px-8 py-4 border border-current text-xs uppercase tracking-[0.25em] hover:bg-neutral-900 hover:text-white transition duration-300">
           Inspect the Unseen
         </a>
-        <button onclick="toggleXray()" class="px-8 py-4 text-xs uppercase tracking-[0.25em] opacity-70 hover:opacity-100 transition underline underline-offset-8">
+        <button onclick="toggleXray()" class="hidden sm:block px-8 py-4 text-xs uppercase tracking-[0.25em] opacity-70 hover:opacity-100 transition underline underline-offset-8">
           Toggle Structural X-Ray
         </button>
       </div>
