@@ -115,14 +115,14 @@
 
   <!-- Navigation -->
   <header class="sticky top-0 z-40 backdrop-blur-md bg-opacity-80 border-b border-subtle transition-colors duration-500" style="background-color: color-mix(in srgb, var(--bg) 85%, transparent);">
-    <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+    <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between relative">
       <div class="flex items-center space-x-8 text-xs tracking-[0.2em] uppercase">
         <a href="#collection" class="hover:opacity-50 transition">Archive 01</a>
         <a href="#atelier" class="hover:opacity-50 transition hidden sm:inline">Savoir-Faire</a>
         <a href="#manifesto" class="hover:opacity-50 transition hidden md:inline">Philosophy</a>
       </div>
 
-      <a href="#" class="serif text-3xl md:text-4xl tracking-[0.35em] font-light pl-[0.35em]">
+      <a href="#" class="serif text-3xl md:text-4xl tracking-[0.35em] font-light pl-[0.35em] absolute left-1/2 -translate-x-1/2">
         VOID
       </a>
 
@@ -143,13 +143,15 @@
   </header>
 
   <!-- Hero Section -->
-  <section class="relative min-h-[82vh] flex flex-col justify-between border-b border-subtle px-6 py-16 max-w-7xl mx-auto">
-    <div class="flex justify-between items-start text-xs uppercase tracking-[0.2em] opacity-60">
-      <span>Paris / Tokyo / Nowhere</span>
-      <span>Autumn / Winter — Non-Existent</span>
+  <section class="relative min-h-[82vh] flex items-center justify-center border-b border-subtle py-16 max-w-7xl mx-auto">
+
+    <!-- Left vertical labels -->
+    <div class="hidden md:flex flex-col items-center justify-center gap-8 absolute left-6 top-0 bottom-0">
+      <span class="text-xs uppercase tracking-[0.2em] opacity-60 whitespace-nowrap" style="writing-mode: vertical-rl; transform: rotate(180deg);">Paris / Tokyo / Nowhere</span>
     </div>
 
-    <div class="my-auto py-16 text-center max-w-4xl mx-auto">
+    <!-- Center content -->
+    <div class="py-16 text-center max-w-4xl mx-auto px-16">
       <p class="text-xs uppercase tracking-[0.3em] mb-6 opacity-70">Haute Couture de l'Absence</p>
       <h1 class="serif text-5xl sm:text-7xl md:text-8xl font-light leading-[1.05] tracking-tight mb-8">
         The unbearable lightness of <span class="italic font-normal">owning nothing.</span>
@@ -167,10 +169,14 @@
       </div>
     </div>
 
-    <div class="flex justify-between items-end text-xs uppercase tracking-[0.2em] opacity-60">
-      <span>Refractive Index: 1.000293</span>
-      <span>Scroll to Perceive ↓</span>
+    <!-- Right vertical labels -->
+    <div class="hidden md:flex flex-col items-center justify-center gap-8 absolute right-6 top-0 bottom-0">
+      <span class="text-xs uppercase tracking-[0.2em] opacity-60 whitespace-nowrap" style="writing-mode: vertical-rl;">Autumn / Winter — Non-Existent</span>
     </div>
+
+    <!-- Bottom center -->
+    <span class="absolute bottom-6 left-1/2 -translate-x-1/2 text-xs uppercase tracking-[0.2em] opacity-60">Scroll to Perceive ↓</span>
+
   </section>
 
   <!-- Infinite Marquee -->
